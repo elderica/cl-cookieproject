@@ -1,16 +1,27 @@
-LISP ?= sbcl
+LISP := sbcl
+LISP_OPTIONS := --noinform --no-sysinit
 
-all: test
+.DEFAULT_GOAL := help
 
-run:
-	rlwrap $(LISP) --load run.lisp
+.PHONY: help
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-build:
-	$(LISP)	--non-interactive \
-		--load {{ cookiecutter.project_name}}.asd \
-		--eval '(ql:quickload :{{ cookiecutter.project_name}})' \
-		--eval '(asdf:make :{{ cookiecutter.project_name}})'
+.PHONY: run
+run: ## Run the project
+	rlwrap \
+	$(LISP) $(LISP_OPTIONS) \
+		--load run.lisp
 
-test:
-	$(LISP) --non-interactive \
+.PHONY: build
+build:  ## Produce executable file
+	$(LISP)	$(LISP_OPTIONS) \
+		--non-interactive \
+		--load build.lisp
+
+.PHONY: test
+test: ## Run tests
+	$(LISP) $(LISP_OPTIONS) \
+		--non-interactive \
 		--load run-tests.lisp
