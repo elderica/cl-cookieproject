@@ -19,6 +19,8 @@
                         :components ((:file "packages")
                                      (:file "{{ cookiecutter.project_name }}"))))
 
+  :in-order-to ((test-op (test-op {{ cookiecutter.project_name }}-tests)))
+
   ;; Build a binary:
   ;; don't change this line.
   :build-operation "program-op"
